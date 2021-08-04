@@ -53,6 +53,7 @@ data Stmt = SetStmt String Exp
           | ProcedureStmt String [String] Stmt
           | CallStmt String [Exp]
           | SeqStmt [Stmt]
+          | AbsStmt Exp
     deriving (Show, Eq)
 
 --- Primitive Functions
@@ -216,3 +217,11 @@ exec (CallStmt name args) penv env =
              in exec body penv new_env
         where funEst = H.lookup name penv
                   
+--- ### Abs Statements
+exec (AbsStmt e1) penv env = 
+    let v1 = eval e1 env
+     in case v1 of
+         IntVal x1 -> case x1 >= 0 of
+             True  -> (show v1, penv, env)
+             False -> (show $ eval (IntOpExp "-" (IntExp 0) (IntExp x1)) env, penv, env)
+         _         -> ("exn: The argument must be an integer.", penv, env)
