@@ -52,6 +52,14 @@ var = do v <- many1 letter <?> "an identifier"
 spaceP :: Parser String
 spaceP = many1 $ oneOf " \n\t"
 
+-- string
+stringP :: Parser String
+stringP = do symbol "\""
+        --      s <- many1 letter <*> (spaces *> many1 digit) <?> "a string"
+             s <- many1 letter <?> "a string"
+             symbol "\""
+             return s
+
 -- paranthesis
 parens :: Parser a -> Parser a
 parens p = do symbol "("
@@ -76,6 +84,10 @@ boolExp =    ( symbol "True"  >> return (BoolExp True)  )
 varExp :: Parser Exp
 varExp = do v <- var
             return $ VarExp v
+
+strExp :: Parser Exp
+strExp = do s <- stringP
+            return $ StrExp s
 
 opExp :: (String -> Exp -> Exp -> Exp) -> String -> Parser (Exp -> Exp -> Exp)
 opExp ctor str = symbol str >> return (ctor str)
@@ -162,6 +174,7 @@ expr = let disj = conj `chainl1` andOp
 atom :: Parser Exp
 atom = intExp
    <|> negintExp
+   <|> strExp
    <|> funExp
    <|> ifExp
    <|> letExp

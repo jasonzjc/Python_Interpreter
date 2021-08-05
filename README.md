@@ -47,3 +47,6 @@ Python> abs(-4)
 ### Expression statement
 When input an expression, such as a variable expression, display its value.
 Now it cannot be realized, because an expression statement could be interpolated as a set statement.
+
+### string
+Currently, string only allows pure letters. Need to include digitals and some legal characters.

@@ -18,6 +18,7 @@ type Result = (String, PEnv, Env)
 
 data Val = IntVal Int
          | BoolVal Bool
+         | StrVal String
          | CloVal [String] Exp Env
          | ExnVal String    -- exception
     deriving (Eq)
@@ -25,6 +26,7 @@ data Val = IntVal Int
 instance Show Val where
     show (IntVal i) = show i
     show (BoolVal i) = show i
+    show (StrVal s) = show s
     show (CloVal xs body env) = "<" ++ show xs   ++ ", "
                                     ++ show body ++ ", "
                                     ++ show env  ++ ">"
@@ -34,6 +36,7 @@ instance Show Val where
 
 data Exp = IntExp Int
          | BoolExp Bool
+         | StrExp String
          | FunExp [String] Exp
          | LetExp [(String,Exp)] Exp
          | AppExp Exp [Exp]
@@ -109,6 +112,7 @@ eval :: Exp -> Env -> Val
 
 eval (IntExp i)  _ = IntVal i
 eval (BoolExp i) _ = BoolVal i
+eval (StrExp s)  _ = StrVal s
 
 --- ### Variables
 
