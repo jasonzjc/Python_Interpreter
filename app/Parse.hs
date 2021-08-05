@@ -23,30 +23,36 @@ run p s =
 
 -- Lexicals
 
+-- symbol
 symbol :: String -> Parser String
 symbol s = do string s
               spaces
               return s
 
+-- positive integer and zero
 int :: Parser Int
 int = do digits <- many1 digit <?> "an integer"
          spaces
          return (read digits :: Int)
 
+-- negative interger
 negint :: Parser Int
 negint = do symbol "-"
             digits <- many1 digit <?> "a negative integer"
             spaces
             return (read $ "-" <> digits :: Int)
 
+-- variable
 var :: Parser String
 var = do v <- many1 letter <?> "an identifier"
          spaces
          return v
 
+-- blank space
 spaceP :: Parser String
 spaceP = many1 $ oneOf " \n\t"
 
+-- paranthesis
 parens :: Parser a -> Parser a
 parens p = do symbol "("
               pp <- p
@@ -138,6 +144,13 @@ appExp = do try $ symbol "apply"
             symbol ")"
             return $ AppExp efn exps
 
+-- absExp :: Parser Exp
+-- absExp = do try $ symbol "abs"
+--             symbol "("
+--             e1 <- expr 
+--             symbol ")"
+--             return $ AbsExp e1
+
 expr :: Parser Exp
 expr = let disj = conj `chainl1` andOp
            conj = arith `chainl1` compOp
@@ -155,13 +168,13 @@ atom = intExp
    <|> try boolExp
    <|> appExp
    <|> varExp
+--    <|> absExp
    <|> parens expr
 
 -- Statements
 
 quitStmt :: Parser Stmt
-quitStmt = do try $ symbol "quit"
-              symbol ";"
+quitStmt = do try $ symbol "exit()"
               return QuitStmt
 
 printStmt :: Parser Stmt
@@ -169,14 +182,12 @@ printStmt = do try $ symbol "print"
                symbol "("
                e <- expr
                symbol ")"
-               -- symbol ";"
                return $ PrintStmt e
 
 setStmt :: Parser Stmt
 setStmt = do v <- var
              symbol "="
              e <- expr
-            --  symbol ";"
              return $ SetStmt v e
 
 ifStmt :: Parser Stmt
@@ -215,6 +226,12 @@ seqStmt = do try $ symbol "do"
              symbol ";"
              return $ SeqStmt stmts
 
+expStmt :: Parser Stmt
+expStmt = do symbol "("
+             e1 <- expr
+             symbol ")"
+             return $ ExpStmt e1
+
 absStmt :: Parser Stmt
 absStmt = do try $ symbol "abs"
              symbol "("
@@ -230,4 +247,6 @@ stmt = quitStmt
    <|> callStmt
    <|> seqStmt
    <|> absStmt
+   <|> expStmt
    <|> try setStmt
+--    <|> try expStmt

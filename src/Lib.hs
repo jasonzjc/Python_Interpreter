@@ -42,6 +42,7 @@ data Exp = IntExp Int
          | BoolOpExp String Exp Exp
          | CompOpExp String Exp Exp
          | VarExp String
+        --  | AbsExp Exp
     deriving (Show, Eq)
 
 --- ### Statements
@@ -53,6 +54,7 @@ data Stmt = SetStmt String Exp
           | ProcedureStmt String [String] Stmt
           | CallStmt String [Exp]
           | SeqStmt [Stmt]
+          | ExpStmt Exp
           | AbsStmt Exp
     deriving (Show, Eq)
 
@@ -168,6 +170,14 @@ eval (LetExp pairs body) env =
         new_env = H.fromList p
      in eval body (H.union new_env env)
     
+-- ### Abs Expressions
+-- eval (AbsExp e1) env = 
+--     let v1 = eval e1 env
+--      in case v1 of
+--          IntVal x1 -> case x1 >= 0 of
+--              True  -> v1
+--              False -> eval (IntOpExp "-" (IntExp 0) (IntExp x1)) env
+--          _         -> ExnVal "The argument must be an integer."
 
 --- Statements
 --- ----------
@@ -225,3 +235,8 @@ exec (AbsStmt e1) penv env =
              True  -> (show v1, penv, env)
              False -> (show $ eval (IntOpExp "-" (IntExp 0) (IntExp x1)) env, penv, env)
          _         -> ("exn: The argument must be an integer.", penv, env)
+
+--- ### Expression Statements
+
+exec (ExpStmt e) penv env = (val, penv, env)
+    where val = show $ eval e env

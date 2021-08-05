@@ -15,13 +15,13 @@ Type Python commands under Python REPL:
 
 `Python>`
 
-Use `quit` or cmd + c to quit the interpolator.
+Use `exit()` or cmd + c to quit the interpolator.
 
 ## Interpolator Functions
 
 ### Constants
 Recognizable constants include
-* integer
+* integer (both positive and negative)
 * string
 
 ### Variables
@@ -33,3 +33,17 @@ Python> a = 3
 Python> print(a)
 3
 ```
+
+### Python Built-in Functions
+#### abs()
+Return the aboslute value of a number.
+
+```
+Python> abs(-4)
+4
+```
+
+## To-do
+### Expression statement
+When input an expression, such as a variable expression, display its value.
+Now it cannot be realized, because an expression statement could be interpolated as a set statement.
