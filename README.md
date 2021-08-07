@@ -23,10 +23,12 @@ Use `exit()` or cmd + c to quit the interpolator.
 Recognizable constants include
 * integer (both positive and negative)
 * double (both positive and negative)
-* string
+* string (the combination of leeters, numbers, marks, puctuation, symbols and spaces, excluding double quote ")
 
 ### Variables
 Assign a constant to a variable
+The variable name should start with a letter or a underscore. 
+The latter part of the variable name can be letter, number, or underscore.
 
 ```
 Python> a = 3
@@ -97,6 +99,9 @@ Python> a=4
 Python> eval(a+2)
 6
 ```
+
+### print()
+Print string or value of an expression given in the argument.
 
 ## To-do
 ### Expression statement

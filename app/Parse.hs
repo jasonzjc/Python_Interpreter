@@ -1,7 +1,10 @@
 module Parse where
 
 import Data.Functor.Identity
+import Data.Char (isLetter, isDigit, isPrint)
 
+import Text.Parsec.String hiding (Parser)
+import Text.Parsec.Char (oneOf, char, digit, satisfy)
 import Text.ParserCombinators.Parsec hiding (Parser)
 import Text.Parsec.Prim (ParsecT)
 
@@ -61,10 +64,14 @@ negdouble = do symbol "-"
 -- number = try double <|> negint <|> int
 
 -- variable
+-- refernece: https://jakewheat.github.io/intro_to_parsing/#_num
 var :: Parser String
-var = do v <- many1 letter <?> "an identifier"
+var = do fc <- firstChar
+         rest <- many nonFirstChar
          spaces
-         return v
+         return (fc:rest)
+   where firstChar = satisfy (\a -> isLetter a || a == '_')
+         nonFirstChar = satisfy (\a -> isDigit a || isLetter a || a == '_')
 
 -- blank space
 spaceP :: Parser String
@@ -74,9 +81,10 @@ spaceP = many1 $ oneOf " \n\t"
 stringP :: Parser String
 stringP = do symbol "\""
         --      s <- many1 letter <*> (spaces *> many1 digit) <?> "a string"
-             s <- many1 letter <?> "a string"
+             s <- many characters <?> "a string"
              symbol "\""
              return s
+      where characters = satisfy (\a -> isPrint a && a /= '\"')
 
 -- paranthesis
 parens :: Parser a -> Parser a
