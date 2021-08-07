@@ -103,6 +103,21 @@ Python> eval(a+2)
 ### print()
 Print string or value of an expression given in the argument.
 
+```
+Python> a="Test"
+
+Python> print(a)
+"Test"
+```
+
+### round(number, ndigits)
+Return number rounded to ndigits precision after the decimal point.
+
+```
+Python> round(-8.021,2)
+-8.02
+```
+
 ## To-do
 ### Expression statement
 When input an expression, such as a variable expression, display its value.

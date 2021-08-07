@@ -319,6 +319,15 @@ evalStmt = do try $ symbol "eval"
               symbol ")"
               return $ EvalStmt e1 
 
+roundStmt :: Parser Stmt
+roundStmt = do try $ symbol "round"
+               symbol "("
+               e1 <- expr 
+               symbol ","
+               e2 <- expr
+               symbol ")"
+               return $ RoundStmt e1 e2
+
 stmt :: Parser Stmt
 stmt = quitStmt
    <|> printStmt
@@ -331,5 +340,6 @@ stmt = quitStmt
    <|> charStmt
    <|> expStmt
    <|> evalStmt
+   <|> roundStmt
    <|> try setStmt
 --    <|> try expStmt

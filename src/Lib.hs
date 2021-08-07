@@ -65,6 +65,7 @@ data Stmt = SetStmt String Exp
           | BoolStmt Exp
           | CharStmt Exp
           | EvalStmt Exp
+          | RoundStmt Exp Exp
     deriving (Show, Eq)
 
 --- Primitive Functions
@@ -329,3 +330,21 @@ exec (EvalStmt e) penv env = (val, penv, env)
 
 exec (ExpStmt e) penv env = (val, penv, env)
     where val = show $ eval e env
+
+--- ### Round Statements
+exec (RoundStmt e1 e2) penv env =
+    let v1 = eval e1 env
+        v2 = eval e2 env
+      in case (v1,v2) of
+          (IntVal i1, IntVal i2) -> (show $ i1, penv, env)
+            -- where z1 = rd fromIntegral(i1) i2
+          (DoubleVal d1, IntVal i2) -> (show $ y1, penv, env)
+            where y1 = rd d1 i2
+          _ -> ("exn: The argument is not defined or out or range.", penv, env)
+
+rd :: (RealFrac a, Integral b, Fractional p) => a -> b -> p
+rd x n = 
+    let flag = x * (10^n) - fromIntegral (floor (x * (10^n)))
+       in case flag > 0.5 of
+           True -> (fromIntegral (ceiling (x * (10^n))))/ (10^n)
+           False -> (fromIntegral (floor (x * (10^n))))/ (10^n)
