@@ -1,6 +1,6 @@
 module Lib where
 import Data.HashMap.Strict as H (HashMap, empty, fromList, insert, lookup, union)
-
+import Data.Char
 
 --- Data Types
 --- ----------
@@ -62,6 +62,8 @@ data Stmt = SetStmt String Exp
           | SeqStmt [Stmt]
           | ExpStmt Exp
           | AbsStmt Exp
+          | BoolStmt Exp
+          | CharStmt Exp
     deriving (Show, Eq)
 
 --- Primitive Functions
@@ -295,6 +297,24 @@ exec (AbsStmt e1) penv env =
              True  -> (show v1, penv, env)
              False -> (show $ eval (NumOpExp "-" (DoubleExp 0) (DoubleExp x1)) env, penv, env)
          _         -> ("exn: The argument must be an integer.", penv, env)
+
+--- ### Bool Statements
+exec (BoolStmt e1) penv env =
+    let v1 = eval e1 env
+      in case v1 of
+          IntVal x1 -> (show $ x1 /= 0, penv, env)
+          DoubleVal x1 -> (show $ x1 /= 0.0, penv, env)
+          BoolVal x1 -> (show $ x1, penv, env)
+          StrVal [] -> (show False, penv,env)
+          StrVal _ -> (show True, penv, env)
+
+--- ### Char Statements
+exec (CharStmt e1) penv env =
+    let v1 = eval e1 env
+      in case v1 of
+          IntVal x -> (show $ c, penv, env)
+            where c = chr x
+          _ -> ("exn: The argument is not defined or out or range.", penv, env)
 
 --- ### Expression Statements
 

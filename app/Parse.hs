@@ -290,6 +290,20 @@ absStmt = do try $ symbol "abs"
              symbol ")"
              return $ AbsStmt e1
 
+boolStmt :: Parser Stmt
+boolStmt = do try $ symbol "bool"
+              symbol "("
+              e1 <- expr 
+              symbol ")"
+              return $ BoolStmt e1 
+
+charStmt :: Parser Stmt
+charStmt = do try $ symbol "chr"
+              symbol "("
+              e1 <- expr 
+              symbol ")"
+              return $ CharStmt e1 
+
 stmt :: Parser Stmt
 stmt = quitStmt
    <|> printStmt
@@ -298,6 +312,8 @@ stmt = quitStmt
    <|> callStmt
    <|> seqStmt
    <|> absStmt
+   <|> boolStmt
+   <|> charStmt
    <|> expStmt
    <|> try setStmt
 --    <|> try expStmt

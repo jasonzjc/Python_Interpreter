@@ -56,6 +56,37 @@ Python> abs(-4.1-9.0)
 13.1
 ```
 
+### bool(x)
+Return a Boolean value. x is converted using the standard truth testing procedure. 
+
+```
+Python> bool(3.2)
+True
+Python> bool(-1)
+True
+Python> bool(0)
+False
+Python> bool(0.0)
+False
+Python> bool("ab")
+True
+Python> bool(True)
+True
+Python> bool(False or True)
+True
+Python> bool(not False)
+True
+```
+### chr(i)
+Return the string representing a character whoe Unicode code point is the integer i. 
+
+```
+Python> chr(97)
+'a'
+Python> chr(45)
+'-'
+```
+
 ## To-do
 ### Expression statement
 When input an expression, such as a variable expression, display its value.
