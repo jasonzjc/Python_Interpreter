@@ -64,6 +64,7 @@ data Stmt = SetStmt String Exp
           | AbsStmt Exp
           | BoolStmt Exp
           | CharStmt Exp
+          | EvalStmt Exp
     deriving (Show, Eq)
 
 --- Primitive Functions
@@ -287,6 +288,7 @@ exec (CallStmt name args) penv env =
         where funEst = H.lookup name penv
                   
 --- ### Abs Statements
+
 exec (AbsStmt e1) penv env = 
     let v1 = eval e1 env
      in case v1 of
@@ -299,6 +301,7 @@ exec (AbsStmt e1) penv env =
          _         -> ("exn: The argument must be an integer.", penv, env)
 
 --- ### Bool Statements
+
 exec (BoolStmt e1) penv env =
     let v1 = eval e1 env
       in case v1 of
@@ -309,12 +312,18 @@ exec (BoolStmt e1) penv env =
           StrVal _ -> (show True, penv, env)
 
 --- ### Char Statements
+
 exec (CharStmt e1) penv env =
     let v1 = eval e1 env
       in case v1 of
           IntVal x -> (show $ c, penv, env)
             where c = chr x
           _ -> ("exn: The argument is not defined or out or range.", penv, env)
+
+--- ### Eval Statements
+
+exec (EvalStmt e) penv env = (val, penv, env)
+    where val = show $ eval e env
 
 --- ### Expression Statements
 

@@ -86,14 +86,25 @@ Python> chr(97)
 Python> chr(45)
 '-'
 ```
+### eval(expression)
+Evaluate the value of the expression.
+
+```
+Python> eval(1+1)
+2
+Python> a=4
+
+Python> eval(a+2)
+6
+```
 
 ## To-do
 ### Expression statement
 When input an expression, such as a variable expression, display its value.
 Now it cannot be realized, because an expression statement could be interpolated as a set statement.
 
-### string
+### String
 Currently, string only allows pure letters. Need to include digitals and some legal characters.
 
-### integer and double operations
+### Integer and double operations
 Currently, the arithmetic and comparison operations require the two operators to be of the same type (int or doulbe). Need to extend to accept mixed data types.

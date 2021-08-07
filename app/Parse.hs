@@ -304,6 +304,13 @@ charStmt = do try $ symbol "chr"
               symbol ")"
               return $ CharStmt e1 
 
+evalStmt :: Parser Stmt
+evalStmt = do try $ symbol "eval"
+              symbol "("
+              e1 <- expr 
+              symbol ")"
+              return $ EvalStmt e1 
+
 stmt :: Parser Stmt
 stmt = quitStmt
    <|> printStmt
@@ -315,5 +322,6 @@ stmt = quitStmt
    <|> boolStmt
    <|> charStmt
    <|> expStmt
+   <|> evalStmt
    <|> try setStmt
 --    <|> try expStmt
