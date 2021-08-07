@@ -169,18 +169,10 @@ eval (NumOpExp op e1 e2) env =
                 ("/", IntVal _, IntVal 0) -> ExnVal "Division by 0"
                 (_, IntVal _, IntVal _) -> liftIntOp f1 v1 v2
                 (_, DoubleVal _, DoubleVal _) -> liftDoubleOp f2 v1 v2
+                (_, ExnVal "Division by 0", _) -> ExnVal "Division by 0"
+                (_, _, ExnVal "Division by 0") -> ExnVal "Division by 0"
                 _ -> ExnVal "Cannot lift"
         _ -> ExnVal "No matching operator"
-
--- eval (DoubleOpExp op e1 e2) env = 
---     case (H.lookup op doubleOps) of
---         (Just f) -> 
---             let v1 = eval e1 env
---                 v2 = eval e2 env
---             in case (op,v2) of
---                 ("/", DoubleVal 0) -> ExnVal "Division by 0"
---                 _               -> liftDoubleOp f v1 v2
---         _ -> ExnVal "No matching operator"
 
 --- ### Boolean and Comparison Operators
 

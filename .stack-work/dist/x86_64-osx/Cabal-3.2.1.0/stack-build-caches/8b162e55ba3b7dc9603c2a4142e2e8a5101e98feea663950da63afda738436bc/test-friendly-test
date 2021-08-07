@@ -9,13 +9,13 @@
 /Users/Ling/.stack/programs/x86_64-osx/ghc-8.10.4/lib/ghc-8.10.4/include/ghcversion.h:
   hash: ddf0d2a5b1862138ade2de39566db63c5db748c6df9abc567bd8b7326ae3838a
 /Users/Ling/MyPrograms/Python_Interpreter/test/UnitTests.hs:
-  hash: 4e47c323e45b629accf1cf60a195136a4eb8e6f0b184679aa5a5d6880c0606bd
+  hash: 6587bb82fd0eb9a86fda36eae993d7447f3541d1991fbad72622b8ccd0545e7e
 ? /Users/Ling/MyPrograms/Python_Interpreter/.stack-work/dist/x86_64-osx/Cabal-3.2.1.0/build/friendly-test/autogen/Paths_interpreter.hs
 : hash: 0dcc0b0d4abe6bae1c7f7d727fc95a8cf7a50216321c78d573b531e419ad0883
 /Users/Ling/MyPrograms/Python_Interpreter/package.yaml:
   hash: 25417f051119d8b0de10e6aa4444735d57e55e0925f6742cda6f536d2f211b72
 /Users/Ling/MyPrograms/Python_Interpreter/test/friendly/FriendlySpec.hs:
-  hash: 5b2b6d0e501b3538ec3e7c53896216918ec3c16301c2e3c92995c03ded0a4fc3
+  hash: f2193bef58b855769aaf4595a39e8301497fc232f55e2d4c10544564ba40d366
 /Users/Ling/MyPrograms/Python_Interpreter/test/PropertyTests.hs:
   hash: 36dd4a76e932ed71975a65d7fa1182ebfc5adc53b142d85ceae8eac9301db947
 /Users/Ling/MyPrograms/Python_Interpreter/interpreter.cabal:

@@ -137,7 +137,7 @@ numOpExpUnitTests =
       ( eval (NumOpExp "+"
               (IntExp 6)
               (NumOpExp "/" (IntExp 4) (IntExp 0))) H.empty )
-      $ ExnVal "Cannot lift"
+      $ ExnVal "Division by 0"
     )
   , ( "(*)"
     , assertEqual' ""
@@ -485,9 +485,61 @@ boolStmtUnitTests =
       ( exec (BoolStmt (IntExp 5)) H.empty H.empty )
       ("True", H.empty, H.empty)
     )
-  , ( "Variable shadowing"
+  , ( "From environment"
     , assertEqual' ""
       ( exec (BoolStmt (VarExp "a")) H.empty (H.fromList [("a", DoubleVal (0.0))]) )
       ("False", H.empty, (H.fromList [("a", DoubleVal (0.0))]))
+    )
+  ]
+
+--- Char Statements
+charStmtUnitTests =
+  [ ( "Vanilla"
+    , assertEqual' ""
+      ( exec (CharStmt (IntExp 97)) H.empty H.empty )
+      ("'a'", H.empty, H.empty)
+    )
+  , ( "From environment"
+    , assertEqual' ""
+      ( exec (CharStmt (VarExp "b")) H.empty (H.fromList [("b", IntVal 97)]) )
+      ("'a'", H.empty, (H.fromList [("b", IntVal 97)]))
+    )
+  , ( "Bad input"
+    , assertEqual' ""
+      ( exec (CharStmt (DoubleExp 2.3)) H.empty (H.fromList [("b", IntVal 97)]) )
+      ("exn: The argument is not defined or out or range.", H.empty, (H.fromList [("b", IntVal 97)]))
+    )
+  ]
+
+--- Eval Statements
+evalStmtUnitTests =
+  [ ( "Vanilla"
+    , assertEqual' ""
+      ( exec (EvalStmt (IntExp 5)) H.empty H.empty )
+      ("5", H.empty, H.empty)
+    )
+  , ( "From environment"
+    , assertEqual' ""
+      ( exec (EvalStmt (NumOpExp "+" (VarExp "a") (VarExp "b"))) H.empty (H.fromList [("a", DoubleVal (0.0)),("b", DoubleVal (1.0))]) )
+      ("1.0", H.empty, (H.fromList [("a", DoubleVal (0.0)),("b", DoubleVal (1.0))]))
+    )
+  ]
+
+--- Round Statements
+roundStmtUnitTests =
+  [ ( "Vanilla"
+    , assertEqual' ""
+      ( exec (RoundStmt (IntExp 5) (IntExp 2)) H.empty H.empty )
+      ("5", H.empty, H.empty)
+    )
+  , ( "From environment"
+    , assertEqual' ""
+      ( exec (RoundStmt (VarExp "a") (VarExp "N")) H.empty (H.fromList [("a", DoubleVal (1.237)),("N", IntVal (2))]) )
+      ("1.24", H.empty, (H.fromList [("a", DoubleVal (1.237)),("N", IntVal (2))]))
+    )
+  , ( "Exception"
+    , assertEqual' ""
+      ( exec (RoundStmt (IntExp 5) (DoubleExp 1.1)) H.empty H.empty )
+      ("exn: The argument is not defined or out or range.", H.empty, H.empty)
     )
   ]

@@ -85,6 +85,15 @@ unitTests = testGroup "Unit Tests"
 
     , testGroup "Bool Statements"
       $ buildTestCase boolStmtUnitTests
+
+    , testGroup "Char Statements"
+      $ buildTestCase charStmtUnitTests
+
+    , testGroup "Eval Statements"
+      $ buildTestCase evalStmtUnitTests
+
+    , testGroup "Round Statements"
+      $ buildTestCase roundStmtUnitTests
     ]
   ]
 
