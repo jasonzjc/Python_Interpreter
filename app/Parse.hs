@@ -42,6 +42,16 @@ negint = do symbol "-"
             spaces
             return (read $ "-" <> digits :: Int)
 
+-- double
+double :: Parser Double
+double = do whole <- many1 digit
+            char '.'
+            fract <- many1 digit
+            return (read $ whole <> "." <> fract)
+
+-- number :: Parser (Num a)
+-- number = try double <|> negint <|> int
+
 -- variable
 var :: Parser String
 var = do v <- many1 letter <?> "an identifier"
@@ -76,6 +86,10 @@ intExp = do i <- int
 negintExp :: Parser Exp
 negintExp = do i <- negint
                return $ IntExp i
+
+doubleExp :: Parser Exp
+doubleExp = do f <- double
+               return $ DoubleExp f
 
 boolExp :: Parser Exp
 boolExp =    ( symbol "True"  >> return (BoolExp True)  )
@@ -118,9 +132,9 @@ compOp = let compOpExp s = symbol s >> return (CompOpExp s)
 ifExp :: Parser Exp
 ifExp = do try $ symbol "if"
            e1 <- expr
-           symbol "then"
+           symbol ":"
            e2 <- expr
-           symbol "else"
+           symbol "else:"
            e3 <- expr
            symbol "fi"
            return $ IfExp e1 e2 e3
@@ -172,8 +186,10 @@ expr = let disj = conj `chainl1` andOp
        in  disj `chainl1` orOp
 
 atom :: Parser Exp
-atom = intExp
+atom = try doubleExp
+   <|> intExp
    <|> negintExp
+   -- <|> 
    <|> strExp
    <|> funExp
    <|> ifExp
@@ -206,9 +222,9 @@ setStmt = do v <- var
 ifStmt :: Parser Stmt
 ifStmt = do try $ symbol "if"
             e1 <- expr
-            symbol "then"
+            symbol ":"
             s2 <- stmt
-            symbol "else"
+            symbol "else:"
             s3 <- stmt
             symbol "fi"
             return $ IfStmt e1 s2 s3

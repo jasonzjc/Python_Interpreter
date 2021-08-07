@@ -17,6 +17,7 @@ type Result = (String, PEnv, Env)
 --- ### Values
 
 data Val = IntVal Int
+         | DoubleVal Double
          | BoolVal Bool
          | StrVal String
          | CloVal [String] Exp Env
@@ -25,6 +26,7 @@ data Val = IntVal Int
 
 instance Show Val where
     show (IntVal i) = show i
+    show (DoubleVal f) = show f
     show (BoolVal i) = show i
     show (StrVal s) = show s
     show (CloVal xs body env) = "<" ++ show xs   ++ ", "
@@ -35,6 +37,7 @@ instance Show Val where
 --- ### Expressions
 
 data Exp = IntExp Int
+         | DoubleExp Double
          | BoolExp Bool
          | StrExp String
          | FunExp [String] Exp
@@ -95,6 +98,10 @@ liftIntOp :: (Int -> Int -> Int) -> Val -> Val -> Val
 liftIntOp op (IntVal x) (IntVal y) = IntVal (op x y)
 liftIntOp _ _ _ = ExnVal "Cannot lift"
 
+-- liftDoubleOp :: (Int -> Int -> Int) -> Val -> Val -> Val
+-- liftIntOp op (IntVal x) (IntVal y) = IntVal (op x y)
+-- liftIntOp _ _ _ = ExnVal "Cannot lift"
+
 liftBoolOp :: (Bool -> Bool -> Bool) -> Val -> Val -> Val
 liftBoolOp op (BoolVal x) (BoolVal y) = BoolVal $ op x y
 liftBoolOp _ _ _ = ExnVal "Cannot lift"
@@ -111,6 +118,7 @@ eval :: Exp -> Env -> Val
 --- ### Constants
 
 eval (IntExp i)  _ = IntVal i
+eval (DoubleExp f) _ = DoubleVal f
 eval (BoolExp i) _ = BoolVal i
 eval (StrExp s)  _ = StrVal s
 
