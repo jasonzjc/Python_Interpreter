@@ -112,7 +112,7 @@ arbIntOpExp n | n > 0 = do
           (_,         IntVal  0,"/") -> divExn
           (IntVal i1, IntVal i2,  _) -> IntVal $ i1 `op` i2
           (_        , _        ,  _) -> liftExn
-    return $ ExpValUnit (IntOpExp opS e1 e2) val
+    return $ ExpValUnit (NumOpExp opS e1 e2) val
                  
 
 

@@ -30,7 +30,7 @@ version = Version [0,3,0,0] []
 bindir, libdir, dynlibdir, datadir, libexecdir, sysconfdir :: FilePath
 
 bindir     = "/Users/Ling/MyPrograms/Python_Interpreter/.stack-work/install/x86_64-osx/8b162e55ba3b7dc9603c2a4142e2e8a5101e98feea663950da63afda738436bc/8.10.4/bin"
-libdir     = "/Users/Ling/MyPrograms/Python_Interpreter/.stack-work/install/x86_64-osx/8b162e55ba3b7dc9603c2a4142e2e8a5101e98feea663950da63afda738436bc/8.10.4/lib/x86_64-osx-ghc-8.10.4/interpreter-0.3.0.0-3af5Jmi2dl81pFSphs9uEG"
+libdir     = "/Users/Ling/MyPrograms/Python_Interpreter/.stack-work/install/x86_64-osx/8b162e55ba3b7dc9603c2a4142e2e8a5101e98feea663950da63afda738436bc/8.10.4/lib/x86_64-osx-ghc-8.10.4/interpreter-0.3.0.0-Ab9pVdBtA941aabYOIyLOu"
 dynlibdir  = "/Users/Ling/MyPrograms/Python_Interpreter/.stack-work/install/x86_64-osx/8b162e55ba3b7dc9603c2a4142e2e8a5101e98feea663950da63afda738436bc/8.10.4/lib/x86_64-osx-ghc-8.10.4"
 datadir    = "/Users/Ling/MyPrograms/Python_Interpreter/.stack-work/install/x86_64-osx/8b162e55ba3b7dc9603c2a4142e2e8a5101e98feea663950da63afda738436bc/8.10.4/share/x86_64-osx-ghc-8.10.4/interpreter-0.3.0.0"
 libexecdir = "/Users/Ling/MyPrograms/Python_Interpreter/.stack-work/install/x86_64-osx/8b162e55ba3b7dc9603c2a4142e2e8a5101e98feea663950da63afda738436bc/8.10.4/libexec/x86_64-osx-ghc-8.10.4/interpreter-0.3.0.0"

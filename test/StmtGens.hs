@@ -155,7 +155,7 @@ procUpTo =
   ProcedureStmt "upTo" ["lower", "upper"]
   (IfStmt (CompOpExp "<" (VarExp "lower") (VarExp "upper"))
     (SeqStmt [ PrintStmt (VarExp "lower")
-             , SetStmt "lower" (IntOpExp "+" (VarExp "lower") (IntExp 1))
+             , SetStmt "lower" (NumOpExp "+" (VarExp "lower") (IntExp 1))
              , CallStmt "upTo" [VarExp "lower", VarExp "upper"]
              ]
     )

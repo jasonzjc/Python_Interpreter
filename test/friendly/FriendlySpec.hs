@@ -30,7 +30,12 @@ unitTests = testGroup "Unit Tests"
     $ buildTestCase liftBoolOpUnitTests
 
   , testGroup "Lifting Comparison Binary Functions"
+    [ testGroup "Lifting Integer Comparison Binary Functions"
     $ buildTestCase liftCompOpUnitTests
+
+    , testGroup "Lifting Double Comparison Binary Functions"
+    $ buildTestCase liftDoubleCompOpUnitTests
+    ]
     
   , testGroup "eval Unit Tests"
     [ testGroup "Constant Expressions"
@@ -40,8 +45,8 @@ unitTests = testGroup "Unit Tests"
       $ buildTestCase varExpUnitTests
 
     , testGroup "Operator Expressions"
-      [ testGroup "Int Operator Expressions"
-        $ buildTestCase intOpExpUnitTests
+      [ testGroup "Number Operator Expressions"
+        $ buildTestCase numOpExpUnitTests
       , testGroup "Bool Operator Expressions"
         $ buildTestCase boolOpExpUnitTests
       , testGroup "Comp Operator Expressions"
@@ -74,6 +79,12 @@ unitTests = testGroup "Unit Tests"
       
     , testGroup "Procedure Call Statements"
       $ buildTestCase callStmtUnitTests
+
+    , testGroup "Abs Statements"
+      $ buildTestCase absStmtUnitTests
+
+    , testGroup "Bool Statements"
+      $ buildTestCase boolStmtUnitTests
     ]
   ]
 

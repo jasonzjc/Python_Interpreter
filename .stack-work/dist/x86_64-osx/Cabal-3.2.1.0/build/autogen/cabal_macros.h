@@ -122,10 +122,10 @@
 #endif /* MIN_TOOL_VERSION_runghc */
 
 #ifndef CURRENT_PACKAGE_KEY
-#define CURRENT_PACKAGE_KEY "interpreter-0.3.0.0-3af5Jmi2dl81pFSphs9uEG"
+#define CURRENT_PACKAGE_KEY "interpreter-0.3.0.0-Ab9pVdBtA941aabYOIyLOu"
 #endif /* CURRENT_PACKAGE_KEY */
 #ifndef CURRENT_COMPONENT_ID
-#define CURRENT_COMPONENT_ID "interpreter-0.3.0.0-3af5Jmi2dl81pFSphs9uEG"
+#define CURRENT_COMPONENT_ID "interpreter-0.3.0.0-Ab9pVdBtA941aabYOIyLOu"
 #endif /* CURRENT_COMPONENT_ID */
 #ifndef CURRENT_PACKAGE_VERSION
 #define CURRENT_PACKAGE_VERSION "0.3.0.0"

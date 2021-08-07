@@ -169,6 +169,7 @@ eval (NumOpExp op e1 e2) env =
                 ("/", IntVal _, IntVal 0) -> ExnVal "Division by 0"
                 (_, IntVal _, IntVal _) -> liftIntOp f1 v1 v2
                 (_, DoubleVal _, DoubleVal _) -> liftDoubleOp f2 v1 v2
+                _ -> ExnVal "Cannot lift"
         _ -> ExnVal "No matching operator"
 
 -- eval (DoubleOpExp op e1 e2) env = 
@@ -196,6 +197,7 @@ eval (CompOpExp op e1 e2) env =
      in case (v1, v2) of
          (IntVal _, IntVal _) -> liftCompOp f1 v1 v2
          (DoubleVal _, DoubleVal _) -> liftDoubleCompOp f2 v1 v2
+         _ -> ExnVal "Cannot lift"
 
 -- ### Not expression
 eval (NotExp e1) env = 
@@ -231,15 +233,6 @@ eval (LetExp pairs body) env =
         new_env = H.fromList p
      in eval body (H.union new_env env)
     
--- ### Abs Expressions
--- eval (AbsExp e1) env = 
---     let v1 = eval e1 env
---      in case v1 of
---          IntVal x1 -> case x1 >= 0 of
---              True  -> v1
---              False -> eval (NumOpExp "-" (IntExp 0) (IntExp x1)) env
---          _         -> ExnVal "The argument must be an integer."
-
 --- Statements
 --- ----------
 

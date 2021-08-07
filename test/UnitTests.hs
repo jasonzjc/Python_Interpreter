@@ -47,6 +47,24 @@ liftCompOpUnitTests =
     )
   ]
 
+liftDoubleCompOpUnitTests :: [(String, Assertion)]
+liftDoubleCompOpUnitTests = 
+  [ ( "lift <="
+    , assertEqual' ""
+      ( liftDoubleCompOp (<=) (DoubleVal 5.4) (DoubleVal 4.5) )
+      $ BoolVal False
+    )
+  , ( "lift >"
+    , assertEqual' ""
+      ( liftDoubleCompOp (>) (DoubleVal 5.4) (DoubleVal 4.5) )
+      $ BoolVal True
+    )
+  , ( "lift == (exception)"
+    ,  assertEqual' ""
+      ( liftDoubleCompOp (==) (BoolVal True) (BoolVal True) )
+      $ ExnVal "Cannot lift"
+    )
+  ]
 --- Constant Expressions
 constExpUnitTests :: [(String, Assertion)]
 constExpUnitTests =
@@ -55,10 +73,20 @@ constExpUnitTests =
       ( eval (IntExp (-5)) H.empty )
       $ IntVal (-5)
     )
+  , ( "Double Constant"
+    , assertEqual' ""
+      ( eval (DoubleExp (-5.4)) H.empty )
+      $ DoubleVal (-5.4)
+    )
   , ( "Bool Constant"
     , assertEqual' ""
       ( eval (BoolExp True) H.empty )
       $ BoolVal True
+    )
+  , ( "String Constant"
+    , assertEqual' ""
+      ( eval (StrExp ("This is a test")) H.empty )
+      $ StrVal ("This is a test")
     )
   ]
 
@@ -67,6 +95,7 @@ testenv1 :: HashMap [Char] Val
 testenv1 = H.fromList [ ("x", IntVal 3)
                       , ("y", BoolVal True)
                       , ("z", ExnVal "ZzZz")
+                      , ("d", DoubleVal (-3.5))
                       , ("f", CloVal [] (IntExp 0) H.empty)
                       ]
 
@@ -77,6 +106,11 @@ varExpUnitTests =
       ( eval (VarExp "x") testenv1 )
       $ IntVal 3
     )
+  , ( "Double VarExp"
+  , assertEqual' ""
+    ( eval (VarExp "d") testenv1)
+    $ DoubleVal (-3.5)
+  )
   , ( "VarExp (exception)"
     , assertEqual' ""
       ( eval (VarExp "x") H.empty)
@@ -91,30 +125,35 @@ varExpUnitTests =
 
 --- Operator Expressions
 
-intOpExpUnitTests :: [(String, Assertion)]
-intOpExpUnitTests =
+numOpExpUnitTests :: [(String, Assertion)]
+numOpExpUnitTests =
   [ ( "(+)"
     , assertEqual' ""
-      ( eval (IntOpExp "+" (IntExp 5) (IntExp 4)) H.empty )
+      ( eval (NumOpExp "+" (IntExp 5) (IntExp 4)) H.empty )
       $ IntVal 9
     )
   , ( "(+ lift exception) "
     , assertEqual' ""
-      ( eval (IntOpExp "+"
+      ( eval (NumOpExp "+"
               (IntExp 6)
-              (IntOpExp "/" (IntExp 4) (IntExp 0))) H.empty )
+              (NumOpExp "/" (IntExp 4) (IntExp 0))) H.empty )
       $ ExnVal "Cannot lift"
+    )
+  , ( "(*)"
+    , assertEqual' ""
+      ( eval (NumOpExp "*" (DoubleExp 5.1) (DoubleExp 4.5)) H.empty )
+      $ DoubleVal 22.95
     )
   , ( "(/)"
     , assertEqual' ""
-      ( eval (IntOpExp "-"
-              (IntOpExp "*" (IntExp 3) (IntExp 10))
+      ( eval (NumOpExp "-"
+              (NumOpExp "*" (IntExp 3) (IntExp 10))
               (IntExp 7)) H.empty )
       $ IntVal 23
     )
   , ( "(/ exception)"
     , assertEqual' ""
-      ( eval (IntOpExp "/" (IntExp 6) (IntExp 0)) H.empty )
+      ( eval (NumOpExp "/" (IntExp 6) (IntExp 0)) H.empty )
       $ ExnVal "Division by 0"
     )
   ]
@@ -140,6 +179,11 @@ compOpExpUnitTests =
     , assertEqual' ""
       ( eval (CompOpExp ">=" (IntExp 6) (IntExp 6)) H.empty )
       $ BoolVal True
+    )
+  , ( "(<)"
+    , assertEqual' ""
+      ( eval (CompOpExp "<" (DoubleExp 6) (DoubleExp 6)) H.empty )
+      $ BoolVal False
     )
   , ( "(>= lift exception)"
     , assertEqual' ""
@@ -174,7 +218,7 @@ ifExpUnitTests =
   , ( "exception"
     , assertEqual' ""
       ( eval (IfExp
-              (IntOpExp "/" (IntExp 5) (IntExp 0))
+              (NumOpExp "/" (IntExp 5) (IntExp 0))
               (IntExp 5)
               (IntExp 10))
         H.empty
@@ -206,7 +250,7 @@ appExpUnitTests :: [(String, Assertion)]
 appExpUnitTests =
   [ ( "Multiple parameters"
     , assertEqual' ""
-      ( eval (AppExp (FunExp ["a","b"] (IntOpExp "+" (VarExp "a") (VarExp "b")))
+      ( eval (AppExp (FunExp ["a","b"] (NumOpExp "+" (VarExp "a") (VarExp "b")))
                [IntExp 4, IntExp 5]) H.empty )
       $ IntVal 9
     )
@@ -235,7 +279,7 @@ letExpUnitTests =
   [ ( "Multiple bindings"
     , assertEqual' ""
       ( eval (LetExp [("a",IntExp 4),("b",IntExp 5)]
-               (IntOpExp "+" (VarExp "a") (VarExp "b")))
+               (NumOpExp "+" (VarExp "a") (VarExp "b")))
         H.empty )
       $ IntVal 9
     )
@@ -362,9 +406,9 @@ procFibHelp =
   (IfStmt (CompOpExp "<=" (VarExp "n") (IntExp 0))
     (PrintStmt $ VarExp "acc2")
     (SeqStmt [ SetStmt "tmp" $ VarExp "acc2"
-             , SetStmt "acc2" $ IntOpExp "+" (VarExp "acc1") (VarExp "acc2")
+             , SetStmt "acc2" $ NumOpExp "+" (VarExp "acc1") (VarExp "acc2")
              , SetStmt "acc1" $ VarExp "tmp"
-             , CallStmt "fibHelper" [IntOpExp "-" (VarExp "n") (IntExp 1)]
+             , CallStmt "fibHelper" [NumOpExp "-" (VarExp "n") (IntExp 1)]
              ]))
 procFibonacci =
   ProcedureStmt "Fibonacci" ["n"]
@@ -397,8 +441,8 @@ callStmtUnitTests =
                          (SetStmt "x" (AppExp (VarExp "f")
                                        [(AppExp (VarExp "g") [VarExp "x"])]))
                        , CallStmt "fog"
-                         [ FunExp ["x"] (IntOpExp "*" (VarExp "x") (IntExp 2))
-                         , FunExp ["x"] (IntOpExp "+" (VarExp "x") (IntExp 1))
+                         [ FunExp ["x"] (NumOpExp "*" (VarExp "x") (IntExp 2))
+                         , FunExp ["x"] (NumOpExp "+" (VarExp "x") (IntExp 1))
                          , IntExp 6
                          ]
                        , PrintStmt (VarExp "x")
@@ -412,10 +456,38 @@ callStmtUnitTests =
                    ]
       , H.fromList [ ("x", IntVal 14)
                    , ("f", CloVal ["x"]
-                       (IntOpExp "*" (VarExp "x") (IntExp 2)) H.empty)
+                       (NumOpExp "*" (VarExp "x") (IntExp 2)) H.empty)
                    , ("g", CloVal ["x"]
-                       (IntOpExp "+" (VarExp "x") (IntExp 1)) H.empty)
+                       (NumOpExp "+" (VarExp "x") (IntExp 1)) H.empty)
                    ]
       )
+    )
+  ]
+
+--- Abs Statements
+absStmtUnitTests =
+  [ ( "Vanilla"
+    , assertEqual' ""
+      ( exec (AbsStmt (IntExp 5)) H.empty H.empty )
+      ("5", H.empty, H.empty)
+    )
+  , ( "Variable shadowing"
+    , assertEqual' ""
+      ( exec (AbsStmt (VarExp "a")) H.empty (H.fromList [("a", DoubleVal (-6.1))]) )
+      ("6.1", H.empty, (H.fromList [("a", DoubleVal (-6.1))]))
+    )
+  ]
+
+--- Bool Statements
+boolStmtUnitTests =
+  [ ( "Vanilla"
+    , assertEqual' ""
+      ( exec (BoolStmt (IntExp 5)) H.empty H.empty )
+      ("True", H.empty, H.empty)
+    )
+  , ( "Variable shadowing"
+    , assertEqual' ""
+      ( exec (BoolStmt (VarExp "a")) H.empty (H.fromList [("a", DoubleVal (0.0))]) )
+      ("False", H.empty, (H.fromList [("a", DoubleVal (0.0))]))
     )
   ]
