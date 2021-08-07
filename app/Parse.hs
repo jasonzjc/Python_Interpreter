@@ -49,6 +49,14 @@ double = do whole <- many1 digit
             fract <- many1 digit
             return (read $ whole <> "." <> fract)
 
+-- negative double
+negdouble :: Parser Double
+negdouble = do symbol "-"
+               whole <- many1 digit
+               char '.'
+               fract <- many1 digit
+               return (read $ "-" <> whole <> "." <> fract)
+
 -- number :: Parser (Num a)
 -- number = try double <|> negint <|> int
 
@@ -91,6 +99,10 @@ doubleExp :: Parser Exp
 doubleExp = do f <- double
                return $ DoubleExp f
 
+negdoubleExp :: Parser Exp
+negdoubleExp = do f <- negdouble
+                  return $ DoubleExp f
+
 boolExp :: Parser Exp
 boolExp =    ( symbol "True"  >> return (BoolExp True)  )
          <|> ( symbol "False" >> return (BoolExp False) )
@@ -107,11 +119,11 @@ opExp :: (String -> Exp -> Exp -> Exp) -> String -> Parser (Exp -> Exp -> Exp)
 opExp ctor str = symbol str >> return (ctor str)
 
 mulOp :: Parser (Exp -> Exp -> Exp)
-mulOp = let mulOpExp = opExp IntOpExp
+mulOp = let mulOpExp = opExp NumOpExp
         in  mulOpExp "*" <|> mulOpExp "/"
 
 addOp :: Parser (Exp -> Exp -> Exp)
-addOp = let addOpExp = opExp IntOpExp
+addOp = let addOpExp = opExp NumOpExp
         in  addOpExp "+" <|> addOpExp "-"
 
 andOp :: Parser (Exp -> Exp -> Exp)
@@ -187,6 +199,7 @@ expr = let disj = conj `chainl1` andOp
 
 atom :: Parser Exp
 atom = try doubleExp
+   <|> try negdoubleExp
    <|> intExp
    <|> negintExp
    -- <|> 

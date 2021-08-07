@@ -22,6 +22,7 @@ Use `exit()` or cmd + c to quit the interpolator.
 ### Constants
 Recognizable constants include
 * integer (both positive and negative)
+* double (both positive and negative)
 * string
 
 ### Variables
@@ -34,6 +35,16 @@ Python> print(a)
 3
 ```
 
+### Basic Operations
+#### Arithmetic Opeartions
+Arithmetic operations (+, -, * and /) for integer and double values.
+
+#### Bool Operations
+Bool operations (and and or) for bool values (True and False)
+
+#### Comparison Opeartions
+Comparison operations (<, >, <=, >=, /=, ==) for integer and double values.
+
 ### Python Built-in Functions
 #### abs()
 Return the aboslute value of a number.
@@ -41,6 +52,8 @@ Return the aboslute value of a number.
 ```
 Python> abs(-4)
 4
+Python> abs(-4.1-9.0)
+13.1
 ```
 
 ## To-do
@@ -50,3 +63,6 @@ Now it cannot be realized, because an expression statement could be interpolated
 
 ### string
 Currently, string only allows pure letters. Need to include digitals and some legal characters.
+
+### integer and double operations
+Currently, the arithmetic and comparison operations require the two operators to be of the same type (int or doulbe). Need to extend to accept mixed data types.

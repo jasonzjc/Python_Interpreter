@@ -44,7 +44,8 @@ data Exp = IntExp Int
          | LetExp [(String,Exp)] Exp
          | AppExp Exp [Exp]
          | IfExp Exp Exp Exp
-         | IntOpExp String Exp Exp
+         | NumOpExp String Exp Exp
+        --  | DoubleOpExp String Exp Exp
          | BoolOpExp String Exp Exp
          | CompOpExp String Exp Exp
          | VarExp String
@@ -74,6 +75,13 @@ intOps = H.fromList [ ("+", (+))
                     , ("/", (div))
                     ]
 
+doubleOps :: H.HashMap String (Double -> Double -> Double)
+doubleOps = H.fromList [ ("+", (+))
+                    , ("-", (-))
+                    , ("*", (*))
+                    , ("/", (/))
+                    ]
+
 boolOps :: H.HashMap String (Bool -> Bool -> Bool)
 boolOps = H.fromList [ ("and", (&&))
                      , ("or", (||))
@@ -81,6 +89,15 @@ boolOps = H.fromList [ ("and", (&&))
 
 compOps :: H.HashMap String (Int -> Int -> Bool)
 compOps = H.fromList [ ("<", (<))
+                     , (">", (>))
+                     , ("<=", (<=))
+                     , (">=", (>=))
+                     , ("/=", (/=))
+                     , ("==", (==))
+                     ]
+
+compDoubleOps :: H.HashMap String (Double -> Double -> Bool)
+compDoubleOps = H.fromList [ ("<", (<))
                      , (">", (>))
                      , ("<=", (<=))
                      , (">=", (>=))
@@ -98,9 +115,14 @@ liftIntOp :: (Int -> Int -> Int) -> Val -> Val -> Val
 liftIntOp op (IntVal x) (IntVal y) = IntVal (op x y)
 liftIntOp _ _ _ = ExnVal "Cannot lift"
 
--- liftDoubleOp :: (Int -> Int -> Int) -> Val -> Val -> Val
+-- liftIntOp :: (Num a) => (a -> a -> a) -> Val -> Val -> Val
 -- liftIntOp op (IntVal x) (IntVal y) = IntVal (op x y)
+-- liftIntOp op (DoubleVal x) (DoubleVal y) = DoubleVal (op x y)
 -- liftIntOp _ _ _ = ExnVal "Cannot lift"
+
+liftDoubleOp :: (Double -> Double -> Double) -> Val -> Val -> Val
+liftDoubleOp op (DoubleVal x) (DoubleVal y) = DoubleVal (op x y)
+liftDoubleOp _ _ _ = ExnVal "Cannot lift"
 
 liftBoolOp :: (Bool -> Bool -> Bool) -> Val -> Val -> Val
 liftBoolOp op (BoolVal x) (BoolVal y) = BoolVal $ op x y
@@ -109,6 +131,10 @@ liftBoolOp _ _ _ = ExnVal "Cannot lift"
 liftCompOp :: (Int -> Int -> Bool) -> Val -> Val -> Val
 liftCompOp op (IntVal x) (IntVal y) = BoolVal $ op x y
 liftCompOp _ _ _ = ExnVal "Cannot lift"
+
+liftDoubleCompOp :: (Double -> Double -> Bool) -> Val -> Val -> Val
+liftDoubleCompOp op (DoubleVal x) (DoubleVal y) = BoolVal $ op x y
+liftDoubleCompOp _ _ _ = ExnVal "Cannot lift"
 
 --- Eval
 --- ----
@@ -131,15 +157,26 @@ eval (VarExp s) env =
 
 --- ### Arithmetic
 
-eval (IntOpExp op e1 e2) env = 
-    case (H.lookup op intOps) of
-        (Just f) -> 
+eval (NumOpExp op e1 e2) env = 
+    case ((H.lookup op intOps),(H.lookup op doubleOps)) of
+        (Just f1, Just f2) -> 
             let v1 = eval e1 env
                 v2 = eval e2 env
-            in case (op,v2) of
-                ("/", IntVal 0) -> ExnVal "Division by 0"
-                _               -> liftIntOp f v1 v2
+            in case (op,v1,v2) of
+                ("/", IntVal _, IntVal 0) -> ExnVal "Division by 0"
+                (_, IntVal _, IntVal _) -> liftIntOp f1 v1 v2
+                (_, DoubleVal _, DoubleVal _) -> liftDoubleOp f2 v1 v2
         _ -> ExnVal "No matching operator"
+
+-- eval (DoubleOpExp op e1 e2) env = 
+--     case (H.lookup op doubleOps) of
+--         (Just f) -> 
+--             let v1 = eval e1 env
+--                 v2 = eval e2 env
+--             in case (op,v2) of
+--                 ("/", DoubleVal 0) -> ExnVal "Division by 0"
+--                 _               -> liftDoubleOp f v1 v2
+--         _ -> ExnVal "No matching operator"
 
 --- ### Boolean and Comparison Operators
 
@@ -152,8 +189,10 @@ eval (BoolOpExp op e1 e2) env =
 eval (CompOpExp op e1 e2) env = 
     let v1 = eval e1 env
         v2 = eval e2 env
-        Just f = H.lookup op compOps
-     in liftCompOp f v1 v2
+        (Just f1, Just f2) = (H.lookup op compOps, H.lookup op compDoubleOps)
+     in case (v1, v2) of
+         (IntVal _, IntVal _) -> liftCompOp f1 v1 v2
+         (DoubleVal _, DoubleVal _) -> liftDoubleCompOp f2 v1 v2
 
 --- ### If Expressions
 
@@ -188,7 +227,7 @@ eval (LetExp pairs body) env =
 --      in case v1 of
 --          IntVal x1 -> case x1 >= 0 of
 --              True  -> v1
---              False -> eval (IntOpExp "-" (IntExp 0) (IntExp x1)) env
+--              False -> eval (NumOpExp "-" (IntExp 0) (IntExp x1)) env
 --          _         -> ExnVal "The argument must be an integer."
 
 --- Statements
@@ -245,7 +284,10 @@ exec (AbsStmt e1) penv env =
      in case v1 of
          IntVal x1 -> case x1 >= 0 of
              True  -> (show v1, penv, env)
-             False -> (show $ eval (IntOpExp "-" (IntExp 0) (IntExp x1)) env, penv, env)
+             False -> (show $ eval (NumOpExp "-" (IntExp 0) (IntExp x1)) env, penv, env)
+         DoubleVal x1 -> case x1 >= 0 of
+             True  -> (show v1, penv, env)
+             False -> (show $ eval (NumOpExp "-" (DoubleExp 0) (DoubleExp x1)) env, penv, env)
          _         -> ("exn: The argument must be an integer.", penv, env)
 
 --- ### Expression Statements
