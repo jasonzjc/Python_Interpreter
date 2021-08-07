@@ -40,7 +40,7 @@ Python> print(a)
 Arithmetic operations (+, -, * and /) for integer and double values.
 
 #### Bool Operations
-Bool operations (and and or) for bool values (True and False)
+Bool operations (and, or and not) for bool values (True and False)
 
 #### Comparison Opeartions
 Comparison operations (<, >, <=, >=, /=, ==) for integer and double values.

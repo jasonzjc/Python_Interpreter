@@ -115,6 +115,14 @@ strExp :: Parser Exp
 strExp = do s <- stringP
             return $ StrExp s
 
+monopExp :: (String -> Exp -> Exp) -> String -> Parser (Exp -> Exp)
+monopExp ctor str = symbol str >> return (ctor str)
+
+notExp :: Parser Exp
+notExp = do try $ symbol "not"
+            e1 <- expr
+            return $ NotExp e1
+
 opExp :: (String -> Exp -> Exp -> Exp) -> String -> Parser (Exp -> Exp -> Exp)
 opExp ctor str = symbol str >> return (ctor str)
 
@@ -191,6 +199,7 @@ appExp = do try $ symbol "apply"
 
 expr :: Parser Exp
 expr = let disj = conj `chainl1` andOp
+         --   notj = conj `chainl1` notOp
            conj = arith `chainl1` compOp
            arith = term `chainl1` addOp
            term = factor `chainl1` mulOp
@@ -202,7 +211,7 @@ atom = try doubleExp
    <|> try negdoubleExp
    <|> intExp
    <|> negintExp
-   -- <|> 
+   <|> notExp
    <|> strExp
    <|> funExp
    <|> ifExp

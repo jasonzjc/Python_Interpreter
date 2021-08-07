@@ -45,11 +45,10 @@ data Exp = IntExp Int
          | AppExp Exp [Exp]
          | IfExp Exp Exp Exp
          | NumOpExp String Exp Exp
-        --  | DoubleOpExp String Exp Exp
+         | NotExp Exp
          | BoolOpExp String Exp Exp
          | CompOpExp String Exp Exp
          | VarExp String
-        --  | AbsExp Exp
     deriving (Show, Eq)
 
 --- ### Statements
@@ -193,6 +192,13 @@ eval (CompOpExp op e1 e2) env =
      in case (v1, v2) of
          (IntVal _, IntVal _) -> liftCompOp f1 v1 v2
          (DoubleVal _, DoubleVal _) -> liftDoubleCompOp f2 v1 v2
+
+-- ### Not expression
+eval (NotExp e1) env = 
+    let v1 = eval e1 env
+     in case v1 of
+         BoolVal x -> BoolVal $ not x
+         _ -> ExnVal "Argument of 'not' is not a Bool"
 
 --- ### If Expressions
 
