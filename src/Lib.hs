@@ -178,7 +178,6 @@ eval (VarExp s) env =
     Nothing -> ExnVal "No match in env"
 --- ### Arithmetic
 
-<<<<<<< HEAD
 eval (NumOpExp op e1 e2) env = 
     case ((H.lookup op intOps),(H.lookup op doubleOps)) of
         (Just f1, Just f2) -> 
@@ -188,8 +187,8 @@ eval (NumOpExp op e1 e2) env =
                 ("/", IntVal _, IntVal 0) -> ExnVal "Division by 0"
                 (_, IntVal _, IntVal _) -> liftIntOp f1 v1 v2
                 (_, DoubleVal _, DoubleVal _) -> liftDoubleOp f2 v1 v2
-                (_, ExnVal "Division by 0", _) -> ExnVal "Division by 0"
-                (_, _, ExnVal "Division by 0") -> ExnVal "Division by 0"
+                -- (_, ExnVal "Division by 0", _) -> ExnVal "Division by 0"
+                -- (_, _, ExnVal "Division by 0") -> ExnVal "Division by 0"
                 _ -> ExnVal "Cannot lift"
         _ -> ExnVal "No matching operator"
 
@@ -210,42 +209,6 @@ eval (CompOpExp op e1 e2) env =
          (DoubleVal _, DoubleVal _) -> liftDoubleCompOp f2 v1 v2
          _ -> ExnVal "Cannot lift"
 
-=======
-eval (NumOpExp op e1 e2) env =
-  case ((H.lookup op intOps), (H.lookup op doubleOps)) of
-    (Just f1, Just f2) ->
-      let v1 = eval e1 env
-          v2 = eval e2 env
-       in case (op, v1, v2) of
-            ("/", IntVal _, IntVal 0) -> ExnVal "Division by 0"
-            (_, IntVal _, IntVal _) -> liftIntOp f1 v1 v2
-            (_, DoubleVal _, DoubleVal _) -> liftDoubleOp f2 v1 v2
-    _ -> ExnVal "No matching operator"
--- eval (DoubleOpExp op e1 e2) env =
---     case (H.lookup op doubleOps) of
---         (Just f) ->
---             let v1 = eval e1 env
---                 v2 = eval e2 env
---             in case (op,v2) of
---                 ("/", DoubleVal 0) -> ExnVal "Division by 0"
---                 _               -> liftDoubleOp f v1 v2
---         _ -> ExnVal "No matching operator"
-
---- ### Boolean and Comparison Operators
-
-eval (BoolOpExp op e1 e2) env =
-  let v1 = eval e1 env
-      v2 = eval e2 env
-      Just f = H.lookup op boolOps
-   in liftBoolOp f v1 v2
-eval (CompOpExp op e1 e2) env =
-  let v1 = eval e1 env
-      v2 = eval e2 env
-      (Just f1, Just f2) = (H.lookup op compOps, H.lookup op compDoubleOps)
-   in case (v1, v2) of
-        (IntVal _, IntVal _) -> liftCompOp f1 v1 v2
-        (DoubleVal _, DoubleVal _) -> liftDoubleCompOp f2 v1 v2
->>>>>>> d4c9b65d9978d350df571b00a736a610d50a99ab
 -- ### Not expression
 eval (NotExp e1) env =
   let v1 = eval e1 env
@@ -271,28 +234,11 @@ eval (AppExp e1 args) env =
            in eval body (H.union env_new clenv)
         _ -> ExnVal "Apply to non-closure"
 --- ### Let Expressions
-<<<<<<< HEAD
 eval (LetExp pairs body) env = 
     let p = map (\(s,e) -> (s, eval e env)) pairs
         new_env = H.fromList p
      in eval body (H.union new_env env)
-    
-=======
-eval (LetExp pairs body) env =
-  let p = map (\(s, e) -> (s, eval e env)) pairs
-      new_env = H.fromList p
-   in eval body (H.union new_env env)
 
--- ### Abs Expressions
--- eval (AbsExp e1) env =
---     let v1 = eval e1 env
---      in case v1 of
---          IntVal x1 -> case x1 >= 0 of
---              True  -> v1
---              False -> eval (NumOpExp "-" (IntExp 0) (IntExp x1)) env
---          _         -> ExnVal "The argument must be an integer."
-
->>>>>>> d4c9b65d9978d350df571b00a736a610d50a99ab
 --- Statements
 --- ----------
 

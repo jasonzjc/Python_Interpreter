@@ -137,7 +137,7 @@ numOpExpUnitTests =
       ( eval (NumOpExp "+"
               (IntExp 6)
               (NumOpExp "/" (IntExp 4) (IntExp 0))) H.empty )
-      $ ExnVal "Division by 0"
+      $ ExnVal "Cannot lift"
     )
   , ( "(*)"
     , assertEqual' ""
