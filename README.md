@@ -23,7 +23,7 @@ Use `exit()` or cmd + c to quit the interpolator.
 Recognizable constants include
 * integer (both positive and negative)
 * double (both positive and negative)
-* string (the combination of letters, numbers, marks, puctuation, symbols and spaces, excluding double quote ")
+* string (the combination of letters, numbers, marks, punctuation, symbols and spaces, excluding double quote ")
 
 ### Variables
 Assign a constant to a variable
@@ -80,7 +80,7 @@ Python> bool(not False)
 True
 ```
 ### chr(i)
-Return the string representing a character whoe Unicode code point is the integer i. 
+Return the string representing a character whose Unicode code point is the integer i. 
 
 ```
 Python> chr(97)
