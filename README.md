@@ -7,7 +7,7 @@ The project is built based on UIUC CS-421 MP2 (https://github-dev.cs.illinois.ed
 
 
 ## Running Code
-Install Haskell 
+Install Haskell: https://www.haskell.org/platform/ 
 
 To run the interpolator, start GHCi with `stack ghci`. From here, run REPL by calling `main`.
 
@@ -16,6 +16,16 @@ Type Python commands under Python REPL:
 `Python>`
 
 Use `exit()` or cmd + c to quit the interpolator.
+
+To test the interpolator use the embedded test, use the following command:
+
+`$ stack test`
+
+To check all the unit and property test been implemented, it is recommended to use the following command:
+
+`$ stack test interpreter\:test\:friendly-test`
+
+The friendly test spec can be found in test/friendly/FriendlySpec.hs.
 
 ## Interpolator Functions
 
@@ -48,7 +58,7 @@ Bool operations (and, or and not) for bool values (True and False)
 Comparison operations (<, >, <=, >=, /=, ==) for integer and double values.
 
 ### Python Built-in Functions
-#### abs()
+#### abs(x)
 Return the aboslute value of a number.
 
 ```
