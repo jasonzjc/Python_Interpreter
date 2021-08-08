@@ -23,7 +23,7 @@ Use `exit()` or cmd + c to quit the interpolator.
 Recognizable constants include
 * integer (both positive and negative)
 * double (both positive and negative)
-* string (the combination of leeters, numbers, marks, puctuation, symbols and spaces, excluding double quote ")
+* string (the combination of letters, numbers, marks, puctuation, symbols and spaces, excluding double quote ")
 
 ### Variables
 Assign a constant to a variable
