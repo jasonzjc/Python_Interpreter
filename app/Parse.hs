@@ -137,6 +137,13 @@ strExp = do
   s <- stringP
   return $ StrExp s
 
+listExp :: Parser Exp
+listExp = do
+  try $ symbol "["
+  items <- var `sepBy` (symbol ",")
+  symbol "]"
+  return $ ListExp items
+
 noneExp :: Parser Exp
 noneExp = (symbol "None" >> return NoneExp)
 
@@ -251,6 +258,7 @@ atom =
     <|> notExp
     <|> strExp
     <|> noneExp
+    <|> listExp
     <|> funExp
     <|> ifExp
     <|> letExp

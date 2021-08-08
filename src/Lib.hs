@@ -17,13 +17,13 @@ type PEnv = H.HashMap String Stmt
 type Result = (String, PEnv, Env)
 
 --- ### Values
-
 data Val
   = IntVal Int
   | DoubleVal Double
   | BoolVal Bool
   | NoneVal
   | StrVal String
+  | ListVal [String]
   | CloVal [String] Exp Env
   | ExnVal String -- exception
   deriving (Eq)
@@ -34,6 +34,7 @@ instance Show Val where
   show (BoolVal i) = show i
   show NoneVal = "None"
   show (StrVal s) = show s
+  show (ListVal xs) = "[" ++ show xs ++ "]"
   show (CloVal xs body env) =
     "<" ++ show xs ++ ", "
       ++ show body
@@ -50,6 +51,7 @@ data Exp
   | BoolExp Bool
   | NoneExp
   | StrExp String
+  | ListExp [String]
   | FunExp [String] Exp
   | LetExp [(String, Exp)] Exp
   | AppExp Exp [Exp]
@@ -170,6 +172,7 @@ eval (DoubleExp f) _ = DoubleVal f
 eval (BoolExp i) _ = BoolVal i
 eval NoneExp _ = NoneVal
 eval (StrExp s) _ = StrVal s
+eval (ListExp xs) _ = ListVal xs
 --- ### Variables
 
 eval (VarExp s) env =
@@ -178,37 +181,34 @@ eval (VarExp s) env =
     Nothing -> ExnVal "No match in env"
 --- ### Arithmetic
 
-eval (NumOpExp op e1 e2) env = 
-    case ((H.lookup op intOps),(H.lookup op doubleOps)) of
-        (Just f1, Just f2) -> 
-            let v1 = eval e1 env
-                v2 = eval e2 env
-            in case (op,v1,v2) of
-                ("/", IntVal _, IntVal 0) -> ExnVal "Division by 0"
-                (_, IntVal _, IntVal _) -> liftIntOp f1 v1 v2
-                (_, DoubleVal _, DoubleVal _) -> liftDoubleOp f2 v1 v2
-                -- (_, ExnVal "Division by 0", _) -> ExnVal "Division by 0"
-                -- (_, _, ExnVal "Division by 0") -> ExnVal "Division by 0"
-                _ -> ExnVal "Cannot lift"
-        _ -> ExnVal "No matching operator"
-
+eval (NumOpExp op e1 e2) env =
+  case ((H.lookup op intOps), (H.lookup op doubleOps)) of
+    (Just f1, Just f2) ->
+      let v1 = eval e1 env
+          v2 = eval e2 env
+       in case (op, v1, v2) of
+            ("/", IntVal _, IntVal 0) -> ExnVal "Division by 0"
+            (_, IntVal _, IntVal _) -> liftIntOp f1 v1 v2
+            (_, DoubleVal _, DoubleVal _) -> liftDoubleOp f2 v1 v2
+            -- (_, ExnVal "Division by 0", _) -> ExnVal "Division by 0"
+            -- (_, _, ExnVal "Division by 0") -> ExnVal "Division by 0"
+            _ -> ExnVal "Cannot lift"
+    _ -> ExnVal "No matching operator"
 --- ### Boolean and Comparison Operators
 
-eval (BoolOpExp op e1 e2) env = 
-    let v1 = eval e1 env
-        v2 = eval e2 env
-        Just f = H.lookup op boolOps
-     in liftBoolOp f v1 v2
-
-eval (CompOpExp op e1 e2) env = 
-    let v1 = eval e1 env
-        v2 = eval e2 env
-        (Just f1, Just f2) = (H.lookup op compOps, H.lookup op compDoubleOps)
-     in case (v1, v2) of
-         (IntVal _, IntVal _) -> liftCompOp f1 v1 v2
-         (DoubleVal _, DoubleVal _) -> liftDoubleCompOp f2 v1 v2
-         _ -> ExnVal "Cannot lift"
-
+eval (BoolOpExp op e1 e2) env =
+  let v1 = eval e1 env
+      v2 = eval e2 env
+      Just f = H.lookup op boolOps
+   in liftBoolOp f v1 v2
+eval (CompOpExp op e1 e2) env =
+  let v1 = eval e1 env
+      v2 = eval e2 env
+      (Just f1, Just f2) = (H.lookup op compOps, H.lookup op compDoubleOps)
+   in case (v1, v2) of
+        (IntVal _, IntVal _) -> liftCompOp f1 v1 v2
+        (DoubleVal _, DoubleVal _) -> liftDoubleCompOp f2 v1 v2
+        _ -> ExnVal "Cannot lift"
 -- ### Not expression
 eval (NotExp e1) env =
   let v1 = eval e1 env
@@ -234,10 +234,10 @@ eval (AppExp e1 args) env =
            in eval body (H.union env_new clenv)
         _ -> ExnVal "Apply to non-closure"
 --- ### Let Expressions
-eval (LetExp pairs body) env = 
-    let p = map (\(s,e) -> (s, eval e env)) pairs
-        new_env = H.fromList p
-     in eval body (H.union new_env env)
+eval (LetExp pairs body) env =
+  let p = map (\(s, e) -> (s, eval e env)) pairs
+      new_env = H.fromList p
+   in eval body (H.union new_env env)
 
 --- Statements
 --- ----------
