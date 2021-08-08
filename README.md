@@ -123,8 +123,5 @@ Python> round(-8.021,2)
 When input an expression, such as a variable expression, display its value.
 Now it cannot be realized, because an expression statement could be interpolated as a set statement.
 
-### String
-Currently, string only allows pure letters. Need to include digitals and some legal characters.
-
 ### Integer and double operations
 Currently, the arithmetic and comparison operations require the two operators to be of the same type (int or doulbe). Need to extend to accept mixed data types.
